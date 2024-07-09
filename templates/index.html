@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Welcome, {{ session['username'] }}</h1>
+<h2>To-Do List</h2>
+<form method="POST" action="{{ url_for('filter_tasks') }}">
+    <label for="category">Filter by Category</label>
+    <select id="category" name="category">
+        <option value="">All</option>
+        {% for category in categories %}
+            <option value="{{ category['category'] }}">{{ category['category'] }}</option>
+        {% endfor %}
+    </select>
+    <label for="status">Filter by Status</label>
+    <select id="status" name="status">
+        <option value="">All</option>
+        <option value="to do">To-Do</option>
+        <option value="urgent">Urgent</option>
+        <option value="done">Done</option>
+        <option value="archived">Archived</option>
+    </select>
+    <label for="priority">Filter by Priority</label>
+    <select id="priority" name="priority">
+        <option value="">All</option>
+        <option value="high">High</option>
+        <option value="medium">Medium</option>
+        <option value="low">Low</option>
+    </select>
+    <button type="submit">Filter</button>
+</form>
+<a href="{{ url_for('add_task') }}">Add Task</a>
+<a href="{{ url_for('add_category') }}">Add Category</a>
+<ul>
+    {% for task in tasks %}
+    <li>
+        <h3>{{ task['title'] }}</h3>
+        <p>{{ task['description'] }}</p>
+        <p>Category: {{ task['category'] }}</p>
+        <p>Priority: {{ task['priority'] }}</p>
+        <p>Due Date: {{ task['due_date'] }}</p>
+        <p>Status: {{ task['status'] }}</p>
+        <form method="POST" action="{{ url_for('update_task', task_id=task['_id']) }}">
+            <label for="status">Change Status</label>
+            <select id="status" name="status">
+                <option value="to do" {% if task['status'] == 'to do' %}selected{% endif %}>To-Do</option>
+                <option value="urgent" {% if task['status'] == 'urgent' %}selected{% endif %}>Urgent</option>
+                <option value="done" {% if task['status'] == 'done' %}selected{% endif %}>Done</option>
+                <option value="archived" {% if task['status'] == 'archived' %}selected{% endif %}>Archived</option>
+            </select>
+            <button type="submit">Update</button>
+        </form>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}
